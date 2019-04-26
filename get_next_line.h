@@ -6,7 +6,7 @@
 /*   By: tkarri <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/17 16:58:56 by tkarri            #+#    #+#             */
-/*   Updated: 2019/04/26 16:03:24 by tkarri           ###   ########.fr       */
+/*   Updated: 2019/04/26 17:10:20 by tkarri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,19 @@
 
 # define BUFF_SIZE 32
 
-typedef	struct	t_list
+typedef struct		s_link
 {
 	int				fd;
 	char			*line;
-	struct t_list	*next;
-}				s_list;
+	struct s_link	*next;
+}					t_link;
 
-int					is_any_line(s_list *current, char **line);
+int					is_any_line(t_link *current, char **line);
 
-s_list				*get_curr(int fd, s_list *root);
+t_link				*get_curr(int fd, t_link *root);
 
-int					is_correct(int fd, char **line, s_list *root,
-						s_list *curr);
+int					is_correct(int fd, char **line, t_link **root,
+		t_link **curr);
 
 int					get_next_line(const int fd, char **line);
 

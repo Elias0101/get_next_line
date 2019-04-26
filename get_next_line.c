@@ -6,7 +6,7 @@
 /*   By: tkarri <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/17 16:57:32 by tkarri            #+#    #+#             */
-/*   Updated: 2019/04/26 16:02:10 by tkarri           ###   ########.fr       */
+/*   Updated: 2019/04/26 17:08:06 by tkarri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 #include <stdlib.h>
 
-s_list	*get_curr(int fd, s_list *root)
+t_link	*get_curr(int fd, t_link *root)
 {
-	s_list *tmp;
+	t_link *tmp;
 
 	if (root == NULL)
 	{
-		if ((root = (s_list *)malloc(sizeof(s_list))) == NULL)
+		if ((root = (t_link *)malloc(sizeof(t_link))) == NULL)
 			return (NULL);
 		root->fd = fd;
 		root->line = NULL;
@@ -33,7 +33,7 @@ s_list	*get_curr(int fd, s_list *root)
 		tmp = tmp->next;
 	if (tmp->fd == fd)
 		return (tmp);
-	if ((tmp->next = (s_list *)malloc(sizeof(s_list))) == NULL)
+	if ((tmp->next = (t_link *)malloc(sizeof(t_link))) == NULL)
 		return (NULL);
 	tmp = tmp->next;
 	tmp->fd = fd;
@@ -42,7 +42,7 @@ s_list	*get_curr(int fd, s_list *root)
 	return (tmp);
 }
 
-int		is_any_line(s_list *current, char **line)
+int		is_any_line(t_link *current, char **line)
 {
 	char	*tmp;
 	int		len;
@@ -66,46 +66,46 @@ int		is_any_line(s_list *current, char **line)
 	return (1);
 }
 
-int		is_correct(int fd, char **line, s_list *root, s_list *curr)
+int		is_correct(int fd, char **line, t_link **root, t_link **curr)
 {
 	if (fd < 0 || line == NULL)
 		return (0);
-	if (root == NULL)
+	if (*root == NULL)
 	{
-		if ((root = get_curr(fd, root)) == NULL)
+		if ((*root = get_curr(fd, *root)) == NULL)
 			return (0);
-		curr = root;
+		*curr = *root;
 	}
-	else if ((curr = get_curr(fd, root)) == NULL)
+	else if ((*curr = get_curr(fd, *root)) == NULL)
 		return (0);
 	return (1);
 }
 
 int		get_next_line(const int fd, char **line)
 {
-	static s_list	*root;
-	s_list			*curr;
+	static t_link	*root;
+	t_link			*curr;
 	char			buf[BUFF_SIZE + 1];
 	char			*tmp;
 	int				ret;
 
 	curr = NULL;
-	if (is_correct(fd, line, root, curr) == 0)
+	if (is_correct(fd, line, &root, &curr) == 0)
 		return (-1);
 	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
 	{
 		buf[ret] = '\0';
-		if (current->line == NULL)
-			current->line = ft_strnew(1);
-		tmp = ft_strjoin(current->line, buf);
-		free(current->line);
-		current->line = tmp;
+		if (curr->line == NULL)
+			curr->line = ft_strnew(1);
+		tmp = ft_strjoin(curr->line, buf);
+		free(curr->line);
+		curr->line = tmp;
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
 	if (ret < 0)
 		return (-1);
-	else if (ret == 0 && (current->line == NULL || (current->line)[0] == '\0'))
+	else if (ret == 0 && (curr->line == NULL || (curr->line)[0] == '\0'))
 		return (0);
-	return (is_any_line(current, line));
+	return (is_any_line(curr, line));
 }
